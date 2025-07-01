@@ -41,41 +41,52 @@ while True:
             print("Sobrenome inválido!")
             sobrenome = input("Digite o sobrenome: ").strip()
 
-        telefone = input("Digite o telefone (opcional, até 15 números): ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+        telefone = input("Digite o número de telefone (opcional, até 15 números). Pressione Enter para deixar em branco: ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
         while telefone and (not telefone.isdigit() or len(telefone) > 15):
             print("Telefone inválido!")
-            telefone = input("Digite o telefone (opcional): ").strip()
+            telefone = input("Digite o número de telefone (opcional): ").strip()
 
-        celular = input("Digite o celular (obrigatório, até 15 números): ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+        celular = input("Digite o número de celular (obrigatório, até 15 números): ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
         while not (celular.isdigit() and len(celular) <= 15):
             print("Celular inválido!")
-            celular = input("Digite o celular: ").strip()
+            celular = input("Digite o número de celular: ").strip()
 
-        email = input("Digite o e-mail (exemplo@dominio.com): ").strip()
+        email = input("Digite o e-mail (exemplo@dominio.com): ").strip().lower()
         while True:
-            if email.count('@') == 1 and '.' in email:
-                pos_arroba = email.find('@')
-                pos_ponto = email.rfind('.')
-                if 0 < pos_arroba < pos_ponto < len(email) - 1:
-                    if not any(c in "!#$%&'*+/=?^_`{|}~" for c in email):
-                        print("E-mail válido.")
-                        break
-            email = input("Digite o e-mail novamente: ").strip()
+            permitido_local_chars = "abcdefghijklmnopqrstuvwxyz0123456789._+-"
+            permitido_domain_chars = "abcdefghijklmnopqrstuvwxyz0123456789.-"
+            partes = email.split('@', 1)
+            if len(partes) == 2 and partes[0] and partes[1] and '.' in partes[1]:
+                local, dominio = partes
+                partes_dominio = dominio.rsplit('.', 1)
+                nome_dominio, tld = partes_dominio
+                if (
+                    all(c in permitido_local_chars for c in local) and
+                    local[0] not in '._+-' and local[-1] not in '._+-' and
+                    '..' not in local and '__' not in local and '++' not in local and
+                    all(c in permitido_domain_chars for c in dominio) and
+                    dominio[0] != '-' and nome_dominio[-1] != '-' and
+                    '--' not in dominio and
+                    len(tld) >= 2 and tld.isalpha()
+                ):
+                    break
+            print("E-mail inválido!")
+            email = input("Digite o e-mail novamente: ").strip().lower()
 
         dia = input("Digite o dia de nascimento (DD): ").strip()
         while not (dia.isdigit() and len(dia) == 2 and 1 <= int(dia) <= 31):
             print("Dia inválido!")
-            dia = input("Digite o dia (DD): ").strip()
+            dia = input("Digite o dia de nascimento (DD): ").strip()
 
         mes = input("Digite o mês de nascimento (MM): ").strip()
         while not (mes.isdigit() and len(mes) == 2 and 1 <= int(mes) <= 12):
             print("Mês inválido!")
-            mes = input("Digite o mês (MM): ").strip()
+            mes = input("Digite o mês de nascimento (MM): ").strip()
 
         ano = input("Digite o ano de nascimento (AAAA): ").strip()
         while not (ano.isdigit() and len(ano) == 4 and 1900 <= int(ano) <= 2025):
             print("Ano inválido!")
-            ano = input("Digite o ano (AAAA): ").strip()
+            ano = input("Digite o ano de nascimento (AAAA): ").strip()
 
         contato = {
             "nome": primeiro_nome,
@@ -223,7 +234,7 @@ while True:
                     print("Sobrenome inválido.")
 
             elif opcao == '3':
-                novo_telefone = input("Novo telefone: ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+                novo_telefone = input("Novo número de telefone: ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
                 if not novo_telefone or (novo_telefone.isdigit() and len(novo_telefone) <= 15):
                     contato_a_atualizar['telefone'] = novo_telefone
                     print("Telefone atualizado!")
@@ -231,25 +242,37 @@ while True:
                     print("Telefone inválido.")
 
             elif opcao == '4':
-                novo_celular = input("Novo celular: ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+                novo_celular = input("Novo número de celular: ").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
                 if novo_celular.isdigit() and len(novo_celular) <= 15:
                     contato_a_atualizar['celular'] = novo_celular
                     print("Celular atualizado!")
                 else:
                     print("Celular inválido.")
 
-            elif opcao == '5':
-                novo_email = input("Novo e-mail: ").strip()
+            if opcao == '5':
+                novo_email = input("Novo e-mail: ").strip().lower()
                 while True:
-                    if novo_email.count('@') == 1 and '.' in novo_email:
-                     pos_arroba = novo_email.find('@')
-                     pos_ponto = novo_email.rfind('.')
-                     if 0 < pos_arroba < pos_ponto < len(novo_email) - 1:
-                         if not any(c in "!#$%&'*+/=?^_`{|}~" for c in novo_email):
+                    permitido_local_chars = "abcdefghijklmnopqrstuvwxyz0123456789._+-"
+                    permitido_domain_chars = "abcdefghijklmnopqrstuvwxyz0123456789.-"
+                    partes = novo_email.split('@', 1)
+                    if len(partes) == 2 and partes[0] and partes[1] and '.' in partes[1]:
+                        local, dominio = partes
+                        partes_dominio = dominio.rsplit('.', 1)
+                        nome_dominio, tld = partes_dominio
+                        if (
+                            all(c in permitido_local_chars for c in local) and
+                            local[0] not in '._+-' and local[-1] not in '._+-' and
+                            '..' not in local and '__' not in local and '++' not in local and
+                            all(c in permitido_domain_chars for c in dominio) and
+                            dominio[0] != '-' and nome_dominio[-1] != '-' and
+                            '--' not in dominio and
+                            len(tld) >= 2 and tld.isalpha()
+                        ):
+                            contato_a_atualizar['email'] = novo_email
                             print("E-mail atualizado!")
                             break
                     print("E-mail inválido!")
-                    novo_email = input("Novo e-mail novamente: ").strip()
+                    novo_email = input("Novo e-mail: ").strip().lower()
 
             elif opcao == '6':
                 novo_dia = input("Novo dia (DD): ").strip()
